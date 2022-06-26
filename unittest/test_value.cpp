@@ -9,9 +9,6 @@
 #include <thread>
 #include <vector>
 
-#include <baidu/feed/mlarch/babylon/any.h>
-using ::baidu::feed::mlarch::babylon::Any;
-
 
 #include <fstream>
 #include <memory>
