@@ -1,0 +1,74 @@
+#edit-mode: -*- python -*-
+#coding:utf-8
+
+WORKROOT('../../../')
+
+#gcc version
+GCC('gcc82')
+
+#Preprocessor flags.
+CPPFLAGS(r'-D_GNU_SOURCE -D__STDC_LIMIT_MACROS')
+CPPFLAGS(r'-DVERSION=\"%s\"' % SVN_LAST_CHANGED_REV())
+
+#C flags.
+#CFLAGS('-g -O3 -pipe -W -Wall -fPIC')
+
+#C++ flags.
+#CXXFLAGS('-g -pipe -W -Werror=return-type -Wall -O1 -fsanitize=thread -fPIC -std=c++17 -fopenmp -Wno-error=misleading-indentation')
+#LDFLAGS('-ltsan -lpthread -rdynamic -ldl -latomic -lgomp -lbfd -liberty -lstdc++fs -lopcodes -Wl,-rpath=/opt/compiler/gcc-8.2/lib:/lib64:/lib')
+
+#C flags.
+CFLAGS('-g -O3 -pipe -W -Wall -fPIC')
+
+#C++ flags.
+CXXFLAGS('-g -pipe -W -Werror=return-type -Wall -O0 -fPIC -std=c++17 -fopenmp -Wno-error=misleading-indentation')
+LDFLAGS('-lpthread -lssl -lz -lcrypto -lcrypt -lrt -rdynamic -ldl -latomic -lgomp -lbfd -liberty -lstdc++fs -lopcodes -Wl,-rpath=/opt/compiler/gcc-8.2/lib:/lib64:/lib')
+
+#C++ flags with asan.
+#LD_PRELOAD=libtsan.so.5 ASAN_OPTIONS=halt_on_error=false:detectj_leaks=1:alloc_dealloc_mismatch=0:detect_stack_use_after_return=1:quarantine_size=4194304 ./output/bin/aiserver 
+#perf_flags=' -O1 -fPIC -fsanitize=thread -ltsan  -fno-omit-frame-pointer -fsanitize-recover=address'
+#perf_ld_flags=' -ltsan -lpthread'
+#CXXFLAGS('-g -pipe -W -Werror=return-type -Wall -O1 -fPIC -std=c++17 -fopenmp -Wno-error=misleading-indentation' + perf_flags)
+#LDFLAGS('-lssl -lz -lcrypto -lcrypt -lrt -rdynamic -ldl -latomic -lgomp -lbfd -liberty -lstdc++fs -lopcodes -Wl,-rpath=/opt/compiler/gcc-8.2/lib:/lib64:/lib' + perf_ld_flags)
+
+
+#-I path
+INCPATHS('. ./src $INC')
+
+#CONFIGS("baidu/bcloud-demo/hello-svn@stable")
+
+HEADERS('src/*.h', '$INC')
+HEADERS('bench/*.h', '$INC')
+HEADERS('base/*.h', '$INC')
+
+CONFIGS('baidu/base/common@stable')
+CONFIGS('public/comlogext/cronoapd@cronoapd_1-0-1-0_PD_BL')
+CONFIGS('baidu/base/base64@stable')
+CONFIGS('baidu/feed-mlarch/babylon@stable')
+CONFIGS('baidu/third-party/boost@boost_1-75-0-1_PD_BL')
+CONFIGS("baidu/third-party/simdjson@simdjson_V0.5.0.5_GCC820_4U3_K2_GEN_PD_BL@git_tag")
+CONFIGS('third-64/gflags@gflags_2-0-0-100_PD_BL')
+CONFIGS("baidu/third-party/gtest@gtest_1-8-1-baidu-ee-common_1-8-1-0_GEN_PD_BL@git_tag")
+CONFIGS("baidu/third-party/rapidjson@rapidjson_V1.1.0.3_GCC820_4U3_K2_GEN_PD_BL@git_tag")   
+CONFIGS('baidu/third-party/protobuf@v3.1.0_for_duer_mirror@git_branch') 
+CONFIGS('baidu/base/baidu-rpc@stable')
+
+Application('clox', Sources(GLOB(
+    'src/*.cpp ' +
+    'main.cpp ' + 
+    ''
+)))
+
+Application('bench_value', Sources(GLOB(
+    'src/*.cpp ' +
+    'bench/bench_value.cpp ' + 
+    ''
+)))
+
+UTApplication('test_all', Sources(GLOB(
+    'src/*.cpp ' +
+    'unittest/*.cpp ' +
+    'unittest/*/*.cpp ' +
+    'unittest/*/*/*.cpp ' +
+    ''
+)), UTOnServer(False))
